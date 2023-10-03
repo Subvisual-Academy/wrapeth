@@ -2,8 +2,7 @@ defmodule Wrapeth.Client do
   @callback get_config() :: %{client_type: atom(), node_url: String.t()}
 
   def get_config() do
-
-    Application.get_env(:wrapeth, :poly_client)
+    []
   end
 
 
