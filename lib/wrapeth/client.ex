@@ -6,6 +6,7 @@ defmodule Wrapeth.Client do
 
   defmacro __using__(_) do
     quote do
+      @spec get_block_number() :: String.t()
       def get_block_number() do
         config = get_config()
         node_url = config[:node_url]

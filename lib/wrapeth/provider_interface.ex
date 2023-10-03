@@ -7,6 +7,12 @@ defmodule Wrapeth.ProviderInterface do
   defmacro __using__(_) do
     quote do
 
+      def get_accounts(opts \\ []) do
+        config = get_config()
+        node_url = config[:node_url]
+        {:ok, accounts} = Ethereumex.HttpClient.eth_accounts(url: node_url)
+        accounts
+      end
 
       def get_block_number() do
         config = get_config()
