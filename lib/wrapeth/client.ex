@@ -1,9 +1,6 @@
 defmodule Wrapeth.Client do
   @callback get_config() :: %{client_type: atom(), node_url: String.t()}
 
-  def get_config() do
-    []
-  end
 
 
   defmacro __using__(_) do
