@@ -1,12 +1,14 @@
-defmodule Wrapeth.Client do
+defmodule Wrapeth.Client.BaseClient do
   @type node_config :: %{client_type: atom(), node_url: String.t()}
+  @callback get_config() :: %{client_type: atom(), node_url: String.t()}
 
-  @callback get_config() :: node_config()
 
-
+ alias Wrapeth.Client.Behaviour
 
   defmacro __using__(_) do
     quote do
+      @behaviour Behaviour
+      @type error :: Behaviour.error()
       def get_client_type() do
         config = get_config()
         config[:client_type]
@@ -20,13 +22,7 @@ defmodule Wrapeth.Client do
         end
       end
 
-      def get_block_number() do
-        config = get_config()
-        node_url = config[:node_url]
-        module_name = get_client()
-        {:ok, block_number} = module_name.eth_block_number(url: node_url)
-        block_number
-      end
+
     end
   end
 end

@@ -1,10 +1,14 @@
 defmodule Wrapeth.EthClient do
-  use Wrapeth.Client
-  @behaviour Wrapeth.Client
+  use Wrapeth.Client.BaseClient
 
-  @impl Wrapeth.Client
-  @spec get_config() :: %{client_type: atom(), node_url: String.t()}
+  @behaviour Wrapeth.Client.BaseClient
+
+
+
+  @impl Wrapeth.Client.BaseClient
   def get_config() do
     Application.get_env(:wrapeth, :eth_client)
   end
+
+
 end
