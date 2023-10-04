@@ -8,5 +8,4 @@ defmodule Wrapeth.Provider.Behaviour do
   @callback get_accounts() :: any()
   @callback get_block_number() :: any()
   @callback get_balance(address, String.t()) :: hex_value()
-  @callback client_and_url() :: any()
 end
