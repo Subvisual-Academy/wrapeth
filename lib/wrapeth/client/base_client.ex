@@ -2,8 +2,7 @@ defmodule Wrapeth.Client.BaseClient do
   @type node_config :: %{client_type: atom(), node_url: String.t()}
   @callback get_config() :: %{client_type: atom(), node_url: String.t()}
 
-
- alias Wrapeth.Client.Behaviour
+  alias Wrapeth.Client.Behaviour
 
   defmacro __using__(_) do
     quote do
@@ -21,8 +20,6 @@ defmodule Wrapeth.Client.BaseClient do
           _ -> {:error, :invalid_client_type}
         end
       end
-
-
     end
   end
 end
