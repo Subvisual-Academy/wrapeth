@@ -1,10 +1,12 @@
 defmodule Wrapeth.EthClient do
-  use Wrapeth.ProviderInterface
-  @behaviour Wrapeth.ProviderInterface
+  use Wrapeth.Provider.ProviderInterface
+  use Wrapeth.Client.BaseClient
+
+  @behaviour Wrapeth.Client.BaseClient
 
 
 
-  @impl Wrapeth.ProviderInterface
+  @impl Wrapeth.Client.BaseClient
   def get_config() do
     Application.get_env(:wrapeth, :eth_client)
   end
