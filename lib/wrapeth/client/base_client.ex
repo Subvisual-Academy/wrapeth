@@ -20,6 +20,12 @@ defmodule Wrapeth.Client.BaseClient do
           _ -> {:error, :invalid_client_type}
         end
       end
+
+      def client_and_url() do
+        config = get_config()
+        config[:node_url]
+        {get_client(), config[:node_url]}
+      end
     end
   end
 end

@@ -1,4 +1,5 @@
 defmodule Wrapeth.EthClient do
+  use Wrapeth.Provider.ProviderInterface
   use Wrapeth.Client.BaseClient
 
   @behaviour Wrapeth.Client.BaseClient
