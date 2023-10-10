@@ -38,23 +38,28 @@ defmodule Wrapeth.Provider.Interface do
 
       def get_block_by_number(number, full) do
         {module_name, node_url} = get_module_and_url()
-        {:ok, block_number} = module_name.eth_get_block_by_number(number, full, url: node_url)
-        block_number
+        {:ok, block} = module_name.eth_get_block_by_number(number, full, url: node_url)
+        block
       end
 
       def get_transaction_count(address, block \\ "latest") do
         {module_name, node_url} = get_module_and_url()
-        {:ok, block_number} = module_name.eth_get_transaction_count(address, block, url: node_url)
-        block_number
+        {:ok, tx_count} = module_name.eth_get_transaction_count(address, block, url: node_url)
+        tx_count
       end
 
       def get_block_transaction_count_by_number(block \\ "latest") do
         {module_name, node_url} = get_module_and_url()
-
-        {:ok, block_number} =
+        {:ok, tx_count} =
           module_name.eth_get_block_transaction_count_by_number(block, url: node_url)
+          tx_count
+      end
 
-        block_number
+      def get_gas_price() do
+        {module_name, node_url} = get_module_and_url()
+        {:ok, gas} =
+          module_name.eth_get_(url: node_url)
+          gas
       end
     end
   end
