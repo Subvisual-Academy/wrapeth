@@ -64,7 +64,7 @@ defmodule Wrapeth.Provider.Interface do
 
       def get_transaction_receipt(hash) do
         {module_name, node_url} = get_module_and_url()
-        {:ok, gas} =
+        {:ok, receipt} =
           module_name.eth_get_transaction_receipt(hash,url: node_url)
           receipt
       end
