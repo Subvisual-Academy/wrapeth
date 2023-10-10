@@ -58,8 +58,15 @@ defmodule Wrapeth.Provider.Interface do
       def get_gas_price() do
         {module_name, node_url} = get_module_and_url()
         {:ok, gas} =
-          module_name.eth_get_(url: node_url)
+          module_name.eth_gas_price(url: node_url)
           gas
+      end
+
+      def get_transaction_receipt(hash) do
+        {module_name, node_url} = get_module_and_url()
+        {:ok, gas} =
+          module_name.eth_get_transaction_receipt(hash,url: node_url)
+          receipt
       end
     end
   end
