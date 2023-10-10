@@ -12,4 +12,5 @@ defmodule Wrapeth.Provider.Behaviour do
   @callback get_transaction_count(address(), hex_value()) :: hex_value()
   @callback get_block_transaction_count_by_number(hex_value()) :: hex_value()
   @callback get_gas_price() :: hex_value()
+  @callback get_transaction_receipt(hex_value()) :: map()
 end
