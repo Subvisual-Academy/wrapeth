@@ -1,4 +1,4 @@
-defmodule Wrapeth.Provider.Behaviour do
+defmodule Wrapeth.ProviderBehaviour do
   @type error :: {:error, map() | binary() | atom()}
   @type address :: String.t()
   @type hex_value :: String.t()

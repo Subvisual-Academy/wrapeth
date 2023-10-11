@@ -1,15 +1,15 @@
-defmodule Wrapeth.Provider.BaseProvider do
-  alias Wrapeth.Provider.Behaviour
+defmodule Wrapeth.Provider do
+  alias Wrapeth.ProviderBehaviour
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      @behaviour Behaviour
+      @behaviour ProviderBehaviour
 
       @otp_app opts[:otp_app]
-      @app_name opts[:app_name]
       @impl true
       def get_module_and_url() do
-        config = Application.get_env(@app_name, @otp_app)
+        IO.inspect(__MODULE__)
+        config = Application.get_env(__MODULE__, @otp_app)
 
         case config[:client_type] do
           :http -> {Ethereumex.HttpClient, config[:node_url]}
