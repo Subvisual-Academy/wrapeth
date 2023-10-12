@@ -8,8 +8,7 @@ defmodule Wrapeth.Provider do
       @otp_app opts[:otp_app]
       @impl true
       def get_module_and_url() do
-        IO.inspect(__MODULE__)
-        config = Application.get_env(__MODULE__, @otp_app)
+        config = Application.get_env(@otp_app, __MODULE__)
 
         case config[:client_type] do
           :http -> {Ethereumex.HttpClient, config[:node_url]}

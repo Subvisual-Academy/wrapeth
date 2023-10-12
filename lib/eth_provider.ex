@@ -1,3 +1,3 @@
 defmodule EthProvider do
-  use Wrapeth.Provider, otp_app: EthClient
+  use Wrapeth.Provider, otp_app: :wrapeth
 end

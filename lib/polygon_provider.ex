@@ -1,3 +1,3 @@
 defmodule PolygonProvider do
-  use Wrapeth.Provider, otp_app: :polygon_client
+  use Wrapeth.Provider, otp_app: :wrapeth
 end

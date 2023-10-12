@@ -1,9 +1,9 @@
 import Config
 
-config EthProvider, EthClient,
+config :wrapeth, EthProvider,
   client_type: :http,
   node_url: System.get_env("ETH_NODE_URL")
 
-config PolygonProvider, PolygonClient,
+config :wrapeth, PolygonProvider,
   client_type: :http,
   node_url: System.get_env("POLY_NODE_URL")
