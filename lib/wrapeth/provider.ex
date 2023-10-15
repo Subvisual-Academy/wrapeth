@@ -173,6 +173,22 @@ defmodule Wrapeth.Provider do
       defp call_client(method_name, args \\ [], _arg \\ []) do
         apply(@client_type, method_name, args ++ [[{:url, @node_url}]])
       end
+
+      @impl true
+      def call_client(method_name, args \\ []) do
+        config = Application.get_env(@otp_app, __MODULE__)
+
+        case config[:client_type] do
+          :http ->
+            apply(Ethereumex.HttpClient, method_name, args ++ [[{:url, config[:node_url]}]])
+
+          :ipc ->
+            apply(Ethereumex.IpcClient, method_name, args ++ [[url: config[:ipc_path]]])
+
+          _ ->
+            {:error, :invalid_client_type}
+        end
+      end
     end
   end
 end
