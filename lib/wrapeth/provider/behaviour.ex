@@ -4,13 +4,14 @@ defmodule Wrapeth.Provider.Behaviour do
   @type hex_value :: String.t()
 
   # API methods
-  @callback get_accounts() :: any()
-  @callback get_block_number() :: hex_value()
-  @callback get_balance(address, String.t()) :: hex_value()
-  @callback get_block_by_number(hex_value(), boolean()) :: map()
-  @callback get_transaction_count(address(), hex_value()) :: hex_value()
-  @callback get_block_transaction_count_by_number(hex_value()) :: hex_value()
-  @callback get_gas_price() :: hex_value()
-  @callback get_transaction_receipt(hex_value()) :: map()
-  @callback call_client(keyword()) :: {keyword(), map() | hex_value()}
+  @callback eth_accounts(any()) :: any()
+  @callback eth_block_number(any) :: hex_value()
+  @callback eth_get_balance(address, String.t(), any()) :: hex_value()
+  @callback eth_get_block_by_number(hex_value(), boolean(), any()) :: map()
+  @callback eth_get_transaction_count(address(), hex_value(), any()) :: hex_value()
+  @callback eth_get_block_transaction_count_by_number(hex_value(), any()) :: hex_value()
+  @callback eth_gas_price(any()) :: hex_value()
+  @callback eth_get_transaction_receipt(hex_value(), any()) :: map()
+  @callback call_client(keyword(), [String.t() | boolean()], any()) ::
+              {keyword(), map() | hex_value()}
 end
