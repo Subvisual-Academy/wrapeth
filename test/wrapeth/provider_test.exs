@@ -9,13 +9,12 @@ defmodule Wrapeth.ProviderTest do
   # Make sure mocks are verified when the test exits
   setup :verify_on_exit!
 
-
   test "gets accounts" do
     HttpMock
     |> expect(:eth_accounts, fn _ -> {:ok, ["0x407d73d8a49eeb85d32cf465507dd71d507100c1"]} end)
 
     assert TestProvider.eth_accounts() ==
-      ["0x407d73d8a49eeb85d32cf465507dd71d507100c1"]
+             ["0x407d73d8a49eeb85d32cf465507dd71d507100c1"]
   end
 
   test "gets account balance" do
