@@ -41,7 +41,7 @@ defmodule Wrapeth.ProviderTest do
              "0x123"
   end
 
-  test "gets transaction count by nu,ber" do
+  test "gets transaction count by number" do
     HttpMock
     |> expect(:eth_get_block_transaction_count_by_number, fn _block, _ -> {:ok, "0x123"} end)
 
@@ -73,20 +73,12 @@ defmodule Wrapeth.ProviderTest do
              {"0x123"}
   end
 
-  test "calls client" do
-    HttpMock
-    |> expect(:eth_gas_price, fn _ -> {:ok, "0x123"} end)
-
-    assert TestProvider.call_client(:eth_gas_price) ==
-             {:ok, "0x123"}
-  end
-
   test "error calling client" do
     HttpMock
     |> expect(:eth_gas_price, fn _ -> {:error, "error calling the client"} end)
 
     assert_raise(RuntimeError, "error calling the client", fn ->
-      TestProvider.call_client(:eth_gas_price)
+      TestProvider.eth_gas_price(:eth_gas_price)
     end)
   end
 end

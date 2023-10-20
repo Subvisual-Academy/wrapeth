@@ -61,8 +61,8 @@ defmodule Wrapeth.Provider do
         receipt
       end
 
-      @impl true
-      def call_client(method_name, args \\ [], _arg \\ []) do
+
+      defp call_client(method_name, args \\ [], _arg \\ []) do
         case apply(@client_type, method_name, args ++ [[{:url, @node_url}]]) do
           {:ok, value} -> {:ok, value}
           {:error, error} -> raise(error)

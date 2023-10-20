@@ -12,6 +12,4 @@ defmodule Wrapeth.Provider.Behaviour do
   @callback eth_get_block_transaction_count_by_number(hex_value(), any()) :: hex_value()
   @callback eth_gas_price(any()) :: hex_value()
   @callback eth_get_transaction_receipt(hex_value(), any()) :: map()
-  @callback call_client(keyword(), [String.t() | boolean()], any()) ::
-              {keyword(), map() | hex_value()}
 end
