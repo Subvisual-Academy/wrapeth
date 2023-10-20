@@ -9,19 +9,23 @@ defmodule Wrapeth.ProviderTest do
   # Make sure mocks are verified when the test exits
   setup :verify_on_exit!
 
+  @valid_address "0x4Bd040d48fdD1C667fcE5fdDd326681766E6ad91"
+  @invalid_addres "0y4Bd040d48fdD1C667fcE5fdDd326681766E6ad91"
+  @invalid_block_number "0y9710d"
+
   test "gets accounts" do
     HttpMock
-    |> expect(:eth_accounts, fn _ -> {:ok, ["0x407d73d8a49eeb85d32cf465507dd71d507100c1"]} end)
+    |> expect(:eth_accounts, fn _ -> {:ok, [@valid_address ]} end)
 
     assert TestProvider.eth_accounts() ==
-             ["0x407d73d8a49eeb85d32cf465507dd71d507100c1"]
+             [@valid_address ]
   end
 
   test "gets account balance" do
     HttpMock
     |> expect(:eth_get_balance, fn _some_addr, _, _ -> {:ok, "0x123"} end)
 
-    assert TestProvider.eth_get_balance("0x407d73d8a49eeb85d32cf465507dd71d507100c1") ==
+    assert TestProvider.eth_get_balance(@valid_address ) ==
              "0x123"
   end
 
@@ -73,12 +77,23 @@ defmodule Wrapeth.ProviderTest do
              {"0x123"}
   end
 
-  test "error calling client" do
+  test "error get balance invalid address" do
     HttpMock
-    |> expect(:eth_gas_price, fn _ -> {:error, "error calling the client"} end)
+    |> expect(:eth_get_balance, fn _invalid_addr, _, _-> {:error, "invalid 1st argument: address value was not valid hexadecimal"} end)
 
-    assert_raise(RuntimeError, "error calling the client", fn ->
-      TestProvider.eth_gas_price(:eth_gas_price)
+    assert_raise(RuntimeError, "invalid 1st argument: address value was not valid hexadecimal", fn ->
+      TestProvider.eth_get_balance(@invalid_address)
     end)
   end
+
+  test "error get block by number with invalid block number" do
+    HttpMock
+    |> expect(:eth_get_block_by_number, fn _invalid_block_num , _, _ -> {:error, "invalid 1st argument: block_number value was not valid block tag or block number"} end)
+
+    assert_raise(RuntimeError, "invalid 1st argument: block_number value was not valid block tag or block number", fn ->
+      TestProvider.eth_get_block_by_number(@invalid_block_number, true)
+    end)
+  end
+
+
 end
