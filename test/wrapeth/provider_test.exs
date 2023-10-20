@@ -96,4 +96,6 @@ defmodule Wrapeth.ProviderTest do
              {:error,
               "invalid 1st argument: block_number value was not a valid block tag or block number"}
   end
+
+
 end
