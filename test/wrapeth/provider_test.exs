@@ -15,17 +15,17 @@ defmodule Wrapeth.ProviderTest do
 
   test "gets accounts" do
     HttpMock
-    |> expect(:eth_accounts, fn _ -> {:ok, [@valid_address ]} end)
+    |> expect(:eth_accounts, fn _ -> {:ok, [@valid_address]} end)
 
     assert TestProvider.eth_accounts() ==
-             [@valid_address ]
+             [@valid_address]
   end
 
   test "gets account balance" do
     HttpMock
     |> expect(:eth_get_balance, fn _some_addr, _, _ -> {:ok, "0x123"} end)
 
-    assert TestProvider.eth_get_balance(@valid_address ) ==
+    assert TestProvider.eth_get_balance(@valid_address) ==
              "0x123"
   end
 
@@ -79,21 +79,31 @@ defmodule Wrapeth.ProviderTest do
 
   test "error get balance invalid address" do
     HttpMock
-    |> expect(:eth_get_balance, fn _invalid_addr, _, _-> {:error, "invalid 1st argument: address value was not valid hexadecimal"} end)
-
-    assert_raise(RuntimeError, "invalid 1st argument: address value was not valid hexadecimal", fn ->
-      TestProvider.eth_get_balance(@invalid_address)
+    |> expect(:eth_get_balance, fn _invalid_addr, _, _ ->
+      {:error, "invalid 1st argument: address value was not valid hexadecimal"}
     end)
+
+    assert_raise(
+      RuntimeError,
+      "invalid 1st argument: address value was not valid hexadecimal",
+      fn ->
+        TestProvider.eth_get_balance(@invalid_address)
+      end
+    )
   end
 
   test "error get block by number with invalid block number" do
     HttpMock
-    |> expect(:eth_get_block_by_number, fn _invalid_block_num , _, _ -> {:error, "invalid 1st argument: block_number value was not valid block tag or block number"} end)
-
-    assert_raise(RuntimeError, "invalid 1st argument: block_number value was not valid block tag or block number", fn ->
-      TestProvider.eth_get_block_by_number(@invalid_block_number, true)
+    |> expect(:eth_get_block_by_number, fn _invalid_block_num, _, _ ->
+      {:error, "invalid 1st argument: block_number value was not valid block tag or block number"}
     end)
+
+    assert_raise(
+      RuntimeError,
+      "invalid 1st argument: block_number value was not valid block tag or block number",
+      fn ->
+        TestProvider.eth_get_block_by_number(@invalid_block_number, true)
+      end
+    )
   end
-
-
 end
