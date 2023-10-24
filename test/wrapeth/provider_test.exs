@@ -3,15 +3,12 @@ defmodule Wrapeth.ProviderTest do
   import Mox
 
   setup do
-    {:ok, valid_address: "0x4Bd040d48fdD1C667fcE5fdDd326681766E6ad91"}
-  end
-
-  setup do
-    {:ok, invalid_address: "0y4Bd040d48fdD1C667fcE5fdDd326681766E6ad91"}
-  end
-
-  setup do
-    {:ok, invalid_block_number: "0y9710d"}
+    {
+      :ok,
+      valid_address: "0x4Bd040d48fdD1C667fcE5fdDd326681766E6ad91",
+      invalid_address: "0y4Bd040d48fdD1C667fcE5fdDd326681766E6ad91",
+      invalid_block_number: "0y9710d"
+    }
   end
 
   defmodule TestProvider do
