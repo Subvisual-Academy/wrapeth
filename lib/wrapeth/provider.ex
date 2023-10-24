@@ -51,10 +51,7 @@ defmodule Wrapeth.Provider do
       end
 
       defp call_client(method_name, args \\ [], _arg \\ []) do
-        case apply(@client_type, method_name, args ++ [[{:url, @node_url}]]) do
-          {:ok, value} -> {:ok, value}
-          {:error, error} -> {:error, error}
-        end
+        apply(@client_type, method_name, args ++ [[{:url, @node_url}]])
       end
     end
   end
