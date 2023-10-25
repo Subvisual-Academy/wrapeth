@@ -21,42 +21,42 @@ defmodule Wrapeth.Provider do
       end
 
       @impl true
-      def net_version( _args \\ []) do
+      def net_version(_args \\ []) do
         call_client(:net_version)
       end
 
       @impl true
-      def net_peer_count( _args \\ []) do
+      def net_peer_count(_args \\ []) do
         call_client(:net_peer_count)
       end
 
       @impl true
-      def net_listening( _args \\ []) do
+      def net_listening(_args \\ []) do
         call_client(:net_listening)
       end
 
       @impl true
-      def eth_protocol_version( _args \\ []) do
+      def eth_protocol_version(_args \\ []) do
         call_client(:eth_protocol_version)
       end
 
       @impl true
-      def eth_syncing( _args \\ []) do
+      def eth_syncing(_args \\ []) do
         call_client(:eth_syncing)
       end
 
       @impl true
-      def eth_mining( _args \\ []) do
+      def eth_mining(_args \\ []) do
         call_client(:eth_mining)
       end
 
       @impl true
-      def eth_hashrate( _args \\ []) do
+      def eth_hashrate(_args \\ []) do
         call_client(:eth_hashrate)
       end
 
       @impl true
-      def eth_max_priority_fee_per_gas( _args \\ []) do
+      def eth_max_priority_fee_per_gas(_args \\ []) do
         call_client(:eth_max_priority_fee_per_gas)
       end
 
@@ -69,7 +69,6 @@ defmodule Wrapeth.Provider do
       def eth_get_storage_at(address, position, block \\ "latest", _args \\ []) do
         call_client(:eth_get_storage_at, [address, position, block])
       end
-
 
       @impl true
       def eth_get_block_transaction_count_by_hash(hash, _args \\ []) do
@@ -136,9 +135,6 @@ defmodule Wrapeth.Provider do
         call_client(:eth_get_compilers)
       end
 
-
-
-
       @impl true
       def eth_accounts(_args \\ []) do
         call_client(:eth_accounts)
@@ -163,8 +159,6 @@ defmodule Wrapeth.Provider do
       def eth_get_transaction_count(address, block \\ "latest", _args \\ []) do
         call_client(:eth_get_transaction_count, [address, block])
       end
-
-
 
       @impl true
       def eth_gas_price(_args \\ []) do
