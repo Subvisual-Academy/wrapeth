@@ -26,9 +26,11 @@ jobs:
     - name: Restore dependencies cache
       uses: actions/cache@v3
       with:
-        path: deps
+        path: examples/et_provider/deps
         key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: ${{ runner.os }}-mix-
+    - name: Change directory to eth_provider
+      run: cd examples/eth_provider/
     - name: Install dependencies
       run: mix deps.get
     - name: Compile
