@@ -10,6 +10,14 @@ defmodule Wrapeth.Provider do
 
       @node_url Application.compile_env(@otp_app, __MODULE__)[:node_url]
 
+      unless @client_type do
+        raise RuntimeError, "Client type not defined in configuration"
+      end
+
+      unless @node_url do
+        raise RuntimeError, "Node URL not defined in configuration"
+      end
+
       @impl true
       def web3_client_version(_args \\ []) do
         call_client(:web3_client_version)
