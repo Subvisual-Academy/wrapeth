@@ -150,12 +150,12 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def eth_get_balance(address, block \\ "latest", pid \\ nil, _args \\ []) do
-        call_client(:eth_get_balance, [address, block])
+        call_client(:eth_get_balance, [address, block], pid)
       end
 
       @impl true
-      def eth_block_number(pid \\ nil, _args \\ []) do
-        call_client(:eth_block_number, [], pid)
+      def eth_block_number(block \\ "latest", pid \\ nil, _args \\ []) do
+        call_client(:eth_block_number, [block], pid)
       end
 
       @impl true

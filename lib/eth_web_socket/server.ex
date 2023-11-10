@@ -44,7 +44,7 @@ defmodule EthWebSocket.Server do
     case length(subs[:sub]) do
       n when n > 1 ->
         GenServer.call(pid, {:unsubscribe, sub_atom})
-        true
+        {:ok, true}
 
       1 ->
         id = state[:requests]
@@ -56,7 +56,7 @@ defmodule EthWebSocket.Server do
         GenServer.call(pid, :wait_for_answer, @time_out)
 
       _ ->
-        false
+        {:ok, false}
     end
   end
 
@@ -76,7 +76,7 @@ defmodule EthWebSocket.Server do
     case is_nil(subs[:subscription_id]) do
       false ->
         GenServer.call(pid, {:subscribe, sub_atom})
-        subs[:subscription_id]
+        {:ok, subs[:subscription_id]}
 
       true ->
         id = state[:requests]
@@ -157,7 +157,7 @@ defmodule EthWebSocket.Server do
     new_state =
       case decoded_res do
         %{"id" => id, "jsonrpc" => "2.0", "result" => result} ->
-          GenServer.reply(state.from_pid, decoded_res["result"])
+          GenServer.reply(state.from_pid, {:ok, decoded_res["result"]})
           process_normal_reply(result, id, state)
 
         %{"jsonrpc" => "2.0", "method" => "eth_subscription", "params" => _params} ->

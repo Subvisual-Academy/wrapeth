@@ -20,7 +20,7 @@ defmodule Wrapeth.Provider.Behaviour do
 
   # API methods
   @callback eth_accounts(any()) :: any()
-  @callback eth_block_number(any(), any) :: hex_value()
+  @callback eth_block_number(any(), any()) :: hex_value()
   @callback eth_get_balance(address, String.t(), any()) :: hex_value()
   @callback eth_get_block_by_number(hex_value(), boolean(), any()) :: map()
   @callback eth_get_transaction_count(address(), hex_value(), any()) :: hex_value()

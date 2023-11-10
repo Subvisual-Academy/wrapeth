@@ -12,7 +12,7 @@ defmodule Subscriber do
   end
 
   def subscribe_and_loop(server_pid) do
-    sub_id = eth_subscribe(server_pid)
+    {:ok, sub_id} = eth_subscribe(server_pid)
     IO.inspect(sub_id)
     loop(server_pid, sub_id, 1)
   end
