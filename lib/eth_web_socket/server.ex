@@ -28,12 +28,10 @@ defmodule EthWebSocket.Server do
 
   def request("eth_subscribe", ["newPendingTransactions"], pid) do
     handle_sub_request(pid, ["newPendingTransactions"], :new_pending_transactions)
-
   end
 
   def request("eth_subscribe", params, pid) do
     handle_sub_request(pid, params, :new_heads)
-
   end
 
   def request("eth_unsubscribe", params, pid) do
@@ -154,8 +152,6 @@ defmodule EthWebSocket.Server do
   end
 
   def handle_info({:asynchronous_request_response, res}, state) do
-
-
     decoded_res = JSON.decode!(res)
 
     new_state =

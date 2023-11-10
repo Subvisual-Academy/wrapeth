@@ -3,7 +3,8 @@ defmodule EthWebSocket.Client do
   require Logger
 
   def start_link(state, opts \\ []) do
-    WebSockex.start_link(System.get_env("ETH_WEB_SOCKET"), __MODULE__, state, opts) # Find a better way to get env var
+    # Find a better way to get env var
+    WebSockex.start_link(System.get_env("ETH_WEB_SOCKET"), __MODULE__, state, opts)
   end
 
   def handle_frame({:text, msg}, state) do

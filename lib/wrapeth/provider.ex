@@ -11,7 +11,6 @@ defmodule Wrapeth.Provider do
 
       @node_url Application.compile_env(@otp_app, __MODULE__)[:node_url]
 
-
       @method_name_map %{
         :eth_block_number => "eth_blockNumber",
         :eth_get_balance => "eth_getBalance",
@@ -21,7 +20,7 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def web3_client_version(pid \\ nil, _args \\ []) do
-        call_client(:web3_client_version,[] ,pid)
+        call_client(:web3_client_version, [], pid)
       end
 
       @impl true
@@ -31,42 +30,42 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def net_version(pid \\ nil, _args \\ []) do
-        call_client(:net_version,[] ,pid)
+        call_client(:net_version, [], pid)
       end
 
       @impl true
       def net_peer_count(pid \\ nil, _args \\ []) do
-        call_client(:net_peer_count,[] ,pid)
+        call_client(:net_peer_count, [], pid)
       end
 
       @impl true
       def net_listening(pid \\ nil, _args \\ []) do
-        call_client(:net_listening,[] ,pid)
+        call_client(:net_listening, [], pid)
       end
 
       @impl true
       def eth_protocol_version(pid \\ nil, _args \\ []) do
-        call_client(:eth_protocol_version,[] ,pid)
+        call_client(:eth_protocol_version, [], pid)
       end
 
       @impl true
       def eth_syncing(pid \\ nil, _args \\ []) do
-        call_client(:eth_syncing,[] ,pid)
+        call_client(:eth_syncing, [], pid)
       end
 
       @impl true
       def eth_mining(pid \\ nil, _args \\ []) do
-        call_client(:eth_mining,[] ,pid)
+        call_client(:eth_mining, [], pid)
       end
 
       @impl true
       def eth_hashrate(pid \\ nil, _args \\ []) do
-        call_client(:eth_hashrate,[] ,pid)
+        call_client(:eth_hashrate, [], pid)
       end
 
       @impl true
       def eth_max_priority_fee_per_gas(pid \\ nil, _args \\ []) do
-        call_client(:eth_max_priority_fee_per_gas,[] ,pid)
+        call_client(:eth_max_priority_fee_per_gas, [], pid)
       end
 
       @impl true
@@ -141,12 +140,12 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def eth_get_compilers(pid \\ nil, _args \\ []) do
-        call_client(:eth_get_compilers,[] ,pid)
+        call_client(:eth_get_compilers, [], pid)
       end
 
       @impl true
       def eth_accounts(pid \\ nil, _args \\ []) do
-        call_client(:eth_accounts,[] ,pid)
+        call_client(:eth_accounts, [], pid)
       end
 
       @impl true
@@ -156,7 +155,7 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def eth_block_number(pid \\ nil, _args \\ []) do
-        call_client(:eth_block_number,[] ,pid)
+        call_client(:eth_block_number, [], pid)
       end
 
       @impl true
@@ -171,7 +170,7 @@ defmodule Wrapeth.Provider do
 
       @impl true
       def eth_gas_price(pid \\ nil, _args \\ []) do
-        call_client(:eth_gas_price,[] ,pid)
+        call_client(:eth_gas_price, [], pid)
       end
 
       @impl true
@@ -194,14 +193,11 @@ defmodule Wrapeth.Provider do
           WebSocket -> request(@method_name_map[method_name], args, pid)
           _ -> apply(@client_type, method_name, args ++ [[{:url, @node_url}]])
         end
-
       end
 
       defp request(name, params, pid) do
         Server.request(name, params, pid)
-
       end
-
     end
   end
 end
