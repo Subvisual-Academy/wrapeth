@@ -198,11 +198,8 @@ defmodule Wrapeth.Provider do
       end
 
       defp request(name, params, pid) do
-        result =
-          Server.request(name, params, pid)
-          |> JSON.decode!()
+        Server.request(name, params, pid)
 
-        result["result"]
       end
 
     end
