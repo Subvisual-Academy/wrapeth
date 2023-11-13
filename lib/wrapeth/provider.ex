@@ -11,6 +11,14 @@ defmodule Wrapeth.Provider do
 
       @node_url Application.compile_env(@otp_app, __MODULE__)[:node_url]
 
+      unless @client_type do
+        raise "Client type not defined in configuration"
+      end
+
+      unless @node_url do
+        raise "Node URL not defined in configuration"
+      end
+
       @method_name_map %{
         :eth_block_number => "eth_blockNumber",
         :eth_get_balance => "eth_getBalance",
