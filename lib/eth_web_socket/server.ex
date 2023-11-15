@@ -3,7 +3,7 @@ defmodule EthWebSocket.Server do
   alias EthWebSocket.Client
   @time_out 60_000
 
-  def start_link(opts \\ []) do
+  defp start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
@@ -22,7 +22,7 @@ defmodule EthWebSocket.Server do
     pid
   end
 
-  def init_ws(pid) do
+  defp init_ws(pid) do
     GenServer.call(pid, {:init_ws, pid})
   end
 
@@ -69,7 +69,7 @@ defmodule EthWebSocket.Server do
     GenServer.call(pid, :wait_for_answer, @time_out)
   end
 
-  def handle_sub_request(pid, params, sub_atom) do
+  defp handle_sub_request(pid, params, sub_atom) do
     state = get_state(pid)
     subs = state[sub_atom]
 
@@ -114,7 +114,7 @@ defmodule EthWebSocket.Server do
     end
   end
 
-  def process_result(result, state) do
+  defp process_result(result, state) do
     params = result["params"]
 
     sub_atom = get_sub_atom(state, params["subscription"], :subscription_id)
@@ -126,7 +126,7 @@ defmodule EthWebSocket.Server do
     state
   end
 
-  def process_normal_reply(result, id, state) do
+  defp process_normal_reply(result, id, state) do
     sub_atom = get_sub_atom(state, id, :request_id)
 
     case sub_atom do
@@ -157,13 +157,18 @@ defmodule EthWebSocket.Server do
     new_state =
       case decoded_res do
         %{"id" => id, "jsonrpc" => "2.0", "result" => result} ->
-          GenServer.reply(state.from_pid, {:ok, decoded_res["result"]})
+          GenServer.reply(state.from_pid, {:ok, result})
           process_normal_reply(result, id, state)
 
         %{"jsonrpc" => "2.0", "method" => "eth_subscription", "params" => _params} ->
           process_result(decoded_res, state)
 
+        %{"id" => _id, "jsonrpc" => "2.0", "error" => result} ->
+          GenServer.reply(state.from_pid, {:error, result["message"]})
+          state
+
         _ ->
+          GenServer.reply(state.from_pid, {:error, "Unexpected server response."})
           state
       end
 

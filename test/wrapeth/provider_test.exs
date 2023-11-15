@@ -54,7 +54,7 @@ defmodule Wrapeth.ProviderTest do
 
   test "gets block number" do
     HttpMock
-    |> expect(:eth_block_number, fn _, _ -> {:ok, "0x123"} end)
+    |> expect(:eth_block_number, fn _ -> {:ok, "0x123"} end)
 
     assert TestProvider.eth_block_number() == {:ok, "0x123"}
   end
