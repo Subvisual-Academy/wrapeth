@@ -12,6 +12,8 @@ defmodule EthWebSocket.WebsocketManager do
   def init(:ok) do
     {:ok,
      %{
+       gs_pid: nil,
+       ws_pid: nil,
        requests: 0,
        new_heads: %{request_id: nil, sub: [], subscription_id: nil},
        new_pending_transactions: %{request_id: nil, sub: [], subscription_id: nil}

@@ -209,15 +209,19 @@ defmodule Wrapeth.Provider do
         call_client(:eth_unsubscribe, [sub_id])
       end
 
-      defp call_client(method_name, args \\ [], _args \\ []) do
+      defp call_client(method_name, args \\ []) do
         case @client_type do
-          WebSocket -> request(@method_name_map[method_name], args)
+          WebSocket -> request(method_name, args)
           _ -> apply(@client_type, method_name, args ++ [[{:url, @node_url}]])
         end
       end
 
       defp request(name, params) do
-        WebsocketManager.request(name, params)
+        if @method_name_map[name] do
+          WebsocketManager.request(@method_name_map[name], params)
+        else
+          throw("#{name} not valid method")
+        end
       end
     end
   end
