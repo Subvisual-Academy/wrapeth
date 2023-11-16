@@ -1,10 +1,12 @@
-defmodule EthWebSocket.Server do
+defmodule EthWebSocket.WebsocketManager do
   use GenServer
-  alias EthWebSocket.Client
+  alias EthWebSocket.Websocket
   @time_out 60_000
 
-  defp start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, :ok, opts)
+  def start_websocket_manager_and_websocket(ws_url) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, :ok, name: WebSocketManager)
+    GenServer.call(WebSocketManager, {:init_ws, WebSocketManager, ws_url})
+    pid
   end
 
   def init(:ok) do
@@ -16,26 +18,16 @@ defmodule EthWebSocket.Server do
      }}
   end
 
-  def start_server do
-    {:ok, pid} = start_link()
-    init_ws(pid)
-    pid
+  def request("eth_subscribe", ["newPendingTransactions"]) do
+    handle_sub_request(WebSocketManager, ["newPendingTransactions"], :new_pending_transactions)
   end
 
-  defp init_ws(pid) do
-    GenServer.call(pid, {:init_ws, pid})
+  def request("eth_subscribe", params) do
+    handle_sub_request(WebSocketManager, params, :new_heads)
   end
 
-  def request("eth_subscribe", ["newPendingTransactions"], pid) do
-    handle_sub_request(pid, ["newPendingTransactions"], :new_pending_transactions)
-  end
-
-  def request("eth_subscribe", params, pid) do
-    handle_sub_request(pid, params, :new_heads)
-  end
-
-  def request("eth_unsubscribe", params, pid) do
-    state = get_state(pid)
+  def request("eth_unsubscribe", params) do
+    state = get_state()
 
     sub_atom = get_sub_atom(state, List.first(params), :subscription_id)
 
@@ -43,49 +35,49 @@ defmodule EthWebSocket.Server do
 
     case length(subs[:sub]) do
       n when n > 1 ->
-        GenServer.call(pid, {:unsubscribe, sub_atom})
+        GenServer.call(WebSocketManager, {:unsubscribe, sub_atom})
         {:ok, true}
 
       1 ->
         id = state[:requests]
-        GenServer.call(pid, :increment_request_count)
+        GenServer.call(WebSocketManager, :increment_request_count)
         {:ok, body} = add_request_info("eth_unsubscribe", params, id)
-        GenServer.call(pid, {:unsubscribe, sub_atom})
-        GenServer.call(pid, {:clean_sub_id, sub_atom})
-        send(pid, {:perform_asynchronous_request, body})
-        GenServer.call(pid, :wait_for_answer, @time_out)
+        GenServer.call(WebSocketManager, {:unsubscribe, sub_atom})
+        GenServer.call(WebSocketManager, {:clean_sub_id, sub_atom})
+        send(WebSocketManager, {:perform_asynchronous_request, body})
+        GenServer.call(WebSocketManager, :wait_for_answer, @time_out)
 
       _ ->
         {:ok, false}
     end
   end
 
-  def request(method_name, params, pid) do
-    id = get_state(pid)[:requests]
-    GenServer.call(pid, :increment_request_count)
+  def request(method_name, params) do
+    id = get_state()[:requests]
+    GenServer.call(WebSocketManager, :increment_request_count)
     {:ok, body} = add_request_info(method_name, params, id)
-    send(pid, {:perform_asynchronous_request, body})
+    send(WebSocketManager, {:perform_asynchronous_request, body})
 
-    GenServer.call(pid, :wait_for_answer, @time_out)
+    GenServer.call(WebSocketManager, :wait_for_answer, @time_out)
   end
 
-  defp handle_sub_request(pid, params, sub_atom) do
-    state = get_state(pid)
+  defp handle_sub_request(_pid, params, sub_atom) do
+    state = get_state()
     subs = state[sub_atom]
 
     case is_nil(subs[:subscription_id]) do
       false ->
-        GenServer.call(pid, {:subscribe, sub_atom})
+        GenServer.call(WebSocketManager, {:subscribe, sub_atom})
         {:ok, subs[:subscription_id]}
 
       true ->
         id = state[:requests]
-        GenServer.call(pid, :increment_request_count)
-        GenServer.call(pid, {:set_sub_id, id, sub_atom})
-        GenServer.call(pid, {:subscribe, sub_atom})
+        GenServer.call(WebSocketManager, :increment_request_count)
+        GenServer.call(WebSocketManager, {:set_sub_id, id, sub_atom})
+        GenServer.call(WebSocketManager, {:subscribe, sub_atom})
         {:ok, body} = add_request_info("eth_subscribe", params, id)
-        send(pid, {:perform_asynchronous_request, body})
-        GenServer.call(pid, :wait_for_answer, @time_out)
+        send(WebSocketManager, {:perform_asynchronous_request, body})
+        GenServer.call(WebSocketManager, :wait_for_answer, @time_out)
     end
   end
 
@@ -141,8 +133,8 @@ defmodule EthWebSocket.Server do
     end
   end
 
-  def get_state(pid) do
-    GenServer.call(pid, :get_state)
+  def get_state() do
+    GenServer.call(WebSocketManager, :get_state)
   end
 
   def handle_info({:perform_asynchronous_request, body}, state) do
@@ -181,8 +173,8 @@ defmodule EthWebSocket.Server do
     {:noreply, new_state}
   end
 
-  def handle_call({:init_ws, gs_pid}, _from, state) do
-    {:ok, ws_pid} = Client.start_link(%{gs_pid: gs_pid})
+  def handle_call({:init_ws, gs_pid, ws_url}, _from, state) do
+    {:ok, ws_pid} = Websocket.start_link(gs_pid, ws_url)
     new_state = Map.put(state, :ws_pid, ws_pid)
     new_state = Map.put(new_state, :gs_pid, gs_pid)
 

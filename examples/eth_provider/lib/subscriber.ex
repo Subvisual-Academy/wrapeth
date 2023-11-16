@@ -1,37 +1,38 @@
 defmodule Subscriber do
   use Wrapeth.Provider, otp_app: :eth_provider
 
-  alias EthWebSocket.Server
+  alias EthWebSocket.WebsocketManager
 
   def start_server do
-    Server.start_server()
+    ws_url = Application.get_env(:eth_provider, Subscriber)[:node_url]
+    WebsocketManager.start_websocket_manager_and_websocket(ws_url)
   end
 
-  def add_sub(server_pid) do
-    spawn(__MODULE__, :subscribe_and_loop, [server_pid])
+  def add_sub() do
+    spawn(__MODULE__, :subscribe_and_loop, [])
   end
 
-  def subscribe_and_loop(server_pid) do
-    {:ok, sub_id} = eth_subscribe(server_pid)
+  def subscribe_and_loop() do
+    {:ok, sub_id} = eth_subscribe()
     IO.inspect(sub_id)
-    loop(server_pid, sub_id, 1)
+    loop(sub_id, 1)
   end
 
-  def loop(server_pid, sub_id, counter) do
+  def loop(sub_id, counter) do
     receive do
       {:ok, _result} ->
         IO.puts("message received")
         # IO.inspect(result)
-        Server.get_state(server_pid)
+        WebsocketManager.get_state()
         |> IO.inspect()
 
         if counter < 4 do
-          loop(server_pid, sub_id, counter + 1)
+          loop(sub_id, counter + 1)
         else
-          eth_unsubscribe(sub_id, server_pid)
+          eth_unsubscribe(sub_id)
           |> IO.inspect()
 
-          Server.get_state(server_pid)
+          WebsocketManager.get_state()
           |> IO.inspect()
         end
 
