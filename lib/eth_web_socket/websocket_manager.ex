@@ -3,6 +3,14 @@ defmodule EthWebSocket.WebsocketManager do
   alias EthWebSocket.Websocket
   @time_out 60_000
 
+  defmodule WebsocketManagerState do
+    defstruct gs_pid: nil,
+              ws_pid: nil,
+              requests: 0,
+              new_heads: %{request_id: nil, sub: [], subscription_id: nil},
+              new_pending_transactions: %{request_id: nil, sub: [], subscription_id: nil}
+  end
+
   def start_websocket_manager_and_websocket(ws_url) do
     {:ok, pid} = GenServer.start_link(__MODULE__, :ok, name: WebSocketManager)
     GenServer.call(WebSocketManager, {:init_ws, WebSocketManager, ws_url})
@@ -11,13 +19,7 @@ defmodule EthWebSocket.WebsocketManager do
 
   def init(:ok) do
     {:ok,
-     %{
-       gs_pid: nil,
-       ws_pid: nil,
-       requests: 0,
-       new_heads: %{request_id: nil, sub: [], subscription_id: nil},
-       new_pending_transactions: %{request_id: nil, sub: [], subscription_id: nil}
-     }}
+     %WebsocketManagerState{}}
   end
 
   def request("eth_subscribe", ["newPendingTransactions"]) do
@@ -33,7 +35,7 @@ defmodule EthWebSocket.WebsocketManager do
 
     sub_atom = get_sub_atom(state, List.first(params), :subscription_id)
 
-    subs = state[sub_atom]
+    subs = Map.get(state, sub_atom)
 
     case length(subs[:sub]) do
       n when n > 1 ->
@@ -41,7 +43,7 @@ defmodule EthWebSocket.WebsocketManager do
         {:ok, true}
 
       1 ->
-        id = state[:requests]
+        id = Map.get(state, :requests)
         GenServer.call(WebSocketManager, :increment_request_count)
         {:ok, body} = add_request_info("eth_unsubscribe", params, id)
         GenServer.call(WebSocketManager, {:unsubscribe, sub_atom})
@@ -65,15 +67,14 @@ defmodule EthWebSocket.WebsocketManager do
 
   defp handle_sub_request(_pid, params, sub_atom) do
     state = get_state()
-    subs = state[sub_atom]
-
+    subs = Map.get(state ,sub_atom)
     case is_nil(subs[:subscription_id]) do
       false ->
         GenServer.call(WebSocketManager, {:subscribe, sub_atom})
         {:ok, subs[:subscription_id]}
 
       true ->
-        id = state[:requests]
+        id = state.requests
         GenServer.call(WebSocketManager, :increment_request_count)
         GenServer.call(WebSocketManager, {:set_sub_id, id, sub_atom})
         GenServer.call(WebSocketManager, {:subscribe, sub_atom})
@@ -93,8 +94,8 @@ defmodule EthWebSocket.WebsocketManager do
   end
 
   defp get_sub_atom(state, id, search_atom) do
-    head = state[:new_heads][search_atom]
-    new_pending_transactions = state[:new_pending_transactions][search_atom]
+    head = Map.get(state.new_heads, search_atom)
+    new_pending_transactions = Map.get(state.new_pending_transactions, search_atom)
 
     case id do
       ^head ->
@@ -113,7 +114,7 @@ defmodule EthWebSocket.WebsocketManager do
 
     sub_atom = get_sub_atom(state, params["subscription"], :subscription_id)
 
-    for id <- state[sub_atom][:sub] do
+    for id <- Map.get(state, sub_atom)[:sub] do
       send(id, {:ok, params["result"]})
     end
 
@@ -129,7 +130,7 @@ defmodule EthWebSocket.WebsocketManager do
 
       _ ->
         updated_subs =
-          Map.update!(state[sub_atom], :subscription_id, fn _ -> result end)
+          Map.update!(Map.get(state, sub_atom), :subscription_id, fn _ -> result end)
 
         Map.update!(state, sub_atom, fn _ -> updated_subs end)
     end
@@ -191,10 +192,10 @@ defmodule EthWebSocket.WebsocketManager do
     {pid, _} = from
 
     new_state =
-      case Enum.member?(state[sub_atom][:sub], pid) do
+      case Enum.member?(Map.get(state, sub_atom)[:sub], pid) do
         false ->
           updated_subs =
-            Map.update!(state[sub_atom], :sub, fn _ -> [pid | state[sub_atom][:sub]] end)
+            Map.update!(Map.get(state, sub_atom), :sub, fn _ -> [pid | Map.get(state, sub_atom)[:sub]] end)
 
           Map.update!(state, sub_atom, fn _ -> updated_subs end)
 
@@ -209,11 +210,11 @@ defmodule EthWebSocket.WebsocketManager do
     {pid, _} = from
 
     new_state =
-      case Enum.member?(state[sub_atom][:sub], pid) do
+      case Enum.member?(Map.get(state, sub_atom)[:sub], pid) do
         true ->
           updated_subs =
-            Map.update!(state[sub_atom], :sub, fn _ ->
-              Enum.filter(state[sub_atom][:sub], fn x -> x != pid end)
+            Map.update!(Map.get(state, sub_atom), :sub, fn _ ->
+              Enum.filter(Map.get(state, sub_atom)[:sub], fn x -> x != pid end)
             end)
 
           Map.update!(state, sub_atom, fn _ -> updated_subs end)
@@ -226,19 +227,19 @@ defmodule EthWebSocket.WebsocketManager do
   end
 
   def handle_call({:clean_sub_id, sub_atom}, _from, state) do
-    updated_subs = Map.update!(state[sub_atom], :subscription_id, fn _ -> nil end)
+    updated_subs = Map.update!(Map.get(state, sub_atom), :subscription_id, fn _ -> nil end)
     updated_subs = Map.update!(updated_subs, :request_id, fn _ -> nil end)
     new_state = Map.update!(state, sub_atom, fn _ -> updated_subs end)
     {:reply, new_state, new_state}
   end
 
   def handle_call(:increment_request_count, _from, state) do
-    new_state = Map.update!(state, :requests, fn _ -> state[:requests] + 1 end)
+    new_state = Map.update!(state, :requests, fn _ -> Map.get(state, :requests) + 1 end)
     {:reply, new_state, new_state}
   end
 
   def handle_call({:set_sub_id, id, sub_atom}, _from, state) do
-    updated_subs = Map.update!(state[sub_atom], :request_id, fn _ -> id end)
+    updated_subs = Map.update!(Map.get(state, sub_atom), :request_id, fn _ -> id end)
     new_state = Map.update!(state, sub_atom, fn _ -> updated_subs end)
     {:reply, new_state, new_state}
   end

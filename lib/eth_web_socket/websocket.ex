@@ -2,8 +2,12 @@ defmodule EthWebSocket.Websocket do
   use WebSockex
   require Logger
 
+  defmodule WebsocketState do
+    defstruct gs_pid: nil
+  end
+
   def start_link(gs_pid, ws_url, opts \\ []) do
-    WebSockex.start_link(ws_url, __MODULE__, %{gs_pid: gs_pid}, opts)
+    WebSockex.start_link(ws_url, __MODULE__, %WebsocketState{gs_pid: gs_pid}, opts)
   end
 
   def handle_frame({:text, msg}, state) do

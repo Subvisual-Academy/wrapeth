@@ -19,14 +19,11 @@ defmodule Subscriber do
     {:ok, sub_id} =
       eth_subscribe()
       |> IO.inspect()
-
     {:ok, %{count: 0, sub_id: sub_id}}
   end
 
   @impl true
   def handle_info({:ok, _data}, state) do
-    # IO.puts "Received message:"
-    # inspect(data)
     IO.puts("Subscribers:")
     IO.inspect(WebsocketManager.get_state())
     IO.inspect(state.count)
