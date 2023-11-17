@@ -18,8 +18,7 @@ defmodule EthWebSocket.WebsocketManager do
   end
 
   def init(:ok) do
-    {:ok,
-     %WebsocketManagerState{}}
+    {:ok, %WebsocketManagerState{}}
   end
 
   def request("eth_subscribe", ["newPendingTransactions"]) do
@@ -67,7 +66,8 @@ defmodule EthWebSocket.WebsocketManager do
 
   defp handle_sub_request(_pid, params, sub_atom) do
     state = get_state()
-    subs = Map.get(state ,sub_atom)
+    subs = Map.get(state, sub_atom)
+
     case is_nil(subs[:subscription_id]) do
       false ->
         GenServer.call(WebSocketManager, {:subscribe, sub_atom})
@@ -195,7 +195,9 @@ defmodule EthWebSocket.WebsocketManager do
       case Enum.member?(Map.get(state, sub_atom)[:sub], pid) do
         false ->
           updated_subs =
-            Map.update!(Map.get(state, sub_atom), :sub, fn _ -> [pid | Map.get(state, sub_atom)[:sub]] end)
+            Map.update!(Map.get(state, sub_atom), :sub, fn _ ->
+              [pid | Map.get(state, sub_atom)[:sub]]
+            end)
 
           Map.update!(state, sub_atom, fn _ -> updated_subs end)
 

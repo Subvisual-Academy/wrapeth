@@ -19,6 +19,7 @@ defmodule Subscriber do
     {:ok, sub_id} =
       eth_subscribe()
       |> IO.inspect()
+
     {:ok, %{count: 0, sub_id: sub_id}}
   end
 
