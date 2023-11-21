@@ -33,7 +33,7 @@ config :otp_app_name, ModuleName,
   node_url: "https://example-node-url.com"
 ```
 
-Replace "https://example-node-url.com" with the URL of your Ethereum node. You can also set the Ethereumex client type to either Ethereumex.HttpClient, Ethereumex.IpcClient or WebSocket.
+Replace "https://example-node-url.com" with the URL of your Ethereum node. You can also set the Ethereumex client type to either `Ethereumex.HttpClient`, `Ethereumex.IpcClient` or `WebSocket`.
 
 ## Usage
 
