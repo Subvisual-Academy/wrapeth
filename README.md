@@ -46,14 +46,13 @@ defmodule MyProvider do
   use Wrapeth.Provider, otp_app: :otp_app_name
 ```
 
-2. Implement your functions using Wrapeth's features. For example, to get the latest block number:
+2. Implement your functions using your Provider features. For example, to get the latest block number:
 
 ```elixir
   def get_latest_block_number do
-    {:ok, block_number} = eth_block_number()
+    {:ok, block_number} = MyProvider.eth_block_number()
     block_number
   end
-```
 
 
 Now, you can use `EthProvider.get_latest_block_number/0` to retrieve the latest Ethereum block number.
