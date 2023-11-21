@@ -39,7 +39,7 @@ Replace "https://example-node-url.com" with the URL of your Ethereum node. You c
 
 To use Wrapeth in your module, follow these steps:
 
-1. Define your module and use `Wrapeth.Provider`, specifying the OTP application name.
+1. Define your Provider and use `Wrapeth.Provider`, specifying the OTP application name.
 
 ```elixir
 defmodule ModuleName do
