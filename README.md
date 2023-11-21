@@ -42,7 +42,7 @@ To use Wrapeth in your module, follow these steps:
 1. Define your Provider and use `Wrapeth.Provider`, specifying the OTP application name.
 
 ```elixir
-defmodule ModuleName do
+defmodule MyProvider do
   use Wrapeth.Provider, otp_app: :otp_app_name
 ```
 
