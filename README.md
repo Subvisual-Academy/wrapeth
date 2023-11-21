@@ -27,7 +27,6 @@ Ensure you have an ethereum node to connect to at the specified url in your conf
 For example:
 
 ```elixir
-Copy code
 config :otp_app_name, ModuleName,
   client_type: Ethereumex.HttpClient,
   node_url: "https://example-node-url.com"
@@ -53,9 +52,7 @@ defmodule MyProvider do
     {:ok, block_number} = MyProvider.eth_block_number()
     block_number
   end
-
-
-Now, you can use `EthProvider.get_latest_block_number/0` to retrieve the latest Ethereum block number.
+```
 
 ### WebSocket
 
