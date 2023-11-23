@@ -5,11 +5,6 @@ defmodule Subscriber do
 
   alias EthWebSocket.WebsocketManager
 
-  def start_websockets do
-    ws_url = Application.get_env(:eth_provider, Subscriber)[:node_url]
-    WebsocketManager.start_websocket_manager_and_websocket(ws_url)
-  end
-
   def add_sub do
     GenServer.start_link(__MODULE__, :ok)
   end
