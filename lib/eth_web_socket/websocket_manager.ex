@@ -17,7 +17,6 @@ defmodule EthWebSocket.WebsocketManager do
 
   def start_link(ws_url) do
     {:ok, pid} = GenServer.start_link(__MODULE__, ws_url, name: WebSocketManager)
-    # GenServer.call(WebSocketManager, {:init_ws, WebSocketManager, ws_url})
     {:ok, pid}
   end
 
